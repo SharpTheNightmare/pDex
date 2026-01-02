@@ -2,7 +2,9 @@
 	Theme Module
 	
 	Centralized color definitions for pDex
-]] local function main()
+]]
+
+local function main()
     local Theme = {
 		-- Main UI Colors (dark pastel purple theme)
 		Main1 = Color3.fromRGB(48, 42, 58),
