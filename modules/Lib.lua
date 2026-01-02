@@ -5417,13 +5417,13 @@ local function main()
 				Disabled = false,
 				OnInput = Lib.Signal.new(),
 				Style = style or 0,
-				Colors = {
-					Background = c3(36,36,36),
-					Primary = c3(49,176,230),
-					Secondary = c3(25,25,25),
-					Disabled = c3(64,64,64),
-					DisabledBackground = c3(52,52,52),
-					DisabledCheck = c3(80,80,80)
+			Colors = {
+					Background = Theme.DarkGray,
+					Primary = Theme.AccentBlue,
+					Secondary = Theme.VeryDarkGray,
+					Disabled = Theme.MediumGray,
+					DisabledBackground = Theme.Main2,
+					DisabledCheck = Theme.MediumGray2
 				}
 			},mt)
 			initGui(obj)
@@ -5435,11 +5435,11 @@ local function main()
 				Toggled = false,
 				Disabled = false,
 				Colors = {
-					Background = c3(36,36,36),
-					Primary = c3(49,176,230),
-					Secondary = c3(25,25,25),
-					Disabled = c3(64,64,64),
-					DisabledBackground = c3(52,52,52)
+					Background = Theme.DarkGray,
+					Primary = Theme.AccentBlue,
+					Secondary = Theme.VeryDarkGray,
+					Disabled = Theme.MediumGray,
+					DisabledBackground = Theme.Main2
 				}
 			},mt)
 			initGui(obj,frame)
@@ -5790,7 +5790,7 @@ local function main()
 					blueInput.Text = tostring(math.floor(255 * blue))
 				end
 
-				chosenColor = Color3.fromRGB(red * 255, green * 255, blue * 255)
+				chosenColor = Color3.new(red, green, blue)
 				colorScope.Position = UDim2.new(0, (relativeX - 9), 0, (relativeY - 9))
 				colorStrip.ImageColor3 = Color3.fromHSV(hue, sat, 1)
 				colorArrow.Position = UDim2.new(0, -2, 0, (relativeStripY - 4))
@@ -5951,7 +5951,7 @@ local function main()
 				local num = tonumber(str)
 				if num then
 					red = math.clamp(math.floor(num),0,255)/255
-					local newColor = Color3.fromRGB(red * 255, green * 255, blue * 255)
+					local newColor = Color3.new(red, green, blue)
 					hue,sat,val = Color3.toHSV(newColor)
 					redInput.Text = tostring(red*255)
 					updateColor(2)
@@ -5963,7 +5963,7 @@ local function main()
 				local num = tonumber(str)
 				if num then
 					green = math.clamp(math.floor(num),0,255)/255
-					local newColor = Color3.fromRGB(red * 255, green * 255, blue * 255)
+					local newColor = Color3.new(red, green, blue)
 					hue,sat,val = Color3.toHSV(newColor)
 					greenInput.Text = tostring(green*255)
 					updateColor(2)
@@ -5975,7 +5975,7 @@ local function main()
 				local num = tonumber(str)
 				if num then
 					blue = math.clamp(math.floor(num),0,255)/255
-					local newColor = Color3.fromRGB(red * 255, green * 255, blue * 255)
+					local newColor = Color3.new(red, green, blue)
 					hue,sat,val = Color3.toHSV(newColor)
 					blueInput.Text = tostring(blue*255)
 					updateColor(2)
@@ -5999,7 +5999,7 @@ local function main()
 
 				newColor.MouseButton1Click:Connect(function()
 					red,green,blue = v.r,v.g,v.b
-					local newColor = Color3.fromRGB(red * 255, green * 255, blue * 255)
+					local newColor = Color3.new(red, green, blue)
 					hue,sat,val = Color3.toHSV(newColor)
 					updateColor()
 				end)

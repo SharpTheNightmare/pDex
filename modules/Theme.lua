@@ -4,6 +4,13 @@
 	Centralized color definitions for pDex
 ]]
 
+
+local function initDeps(data)
+end
+
+local function initAfterMain(appTable)
+end
+
 local function main()
     local Theme = {
 		-- Main UI Colors (dark pastel purple theme)
@@ -120,5 +127,7 @@ local function main()
 end
 
 return {
+    InitDeps = initDeps,
+    InitAfterMain = initAfterMain,
     Main = main
 }
