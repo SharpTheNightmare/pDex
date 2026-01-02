@@ -292,7 +292,7 @@ local function main()
     G2L["17"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular,
         Enum.FontStyle.Normal);
     G2L["17"]["AutomaticSize"] = Enum.AutomaticSize.Y;
-    G2L["17"]["Selectable"] = false;
+    G2L["17"]["Selectable"] = true;
     G2L["17"]["ClearTextOnFocus"] = false;
     G2L["17"]["Size"] = UDim2.new(1, 0, 0, 1);
     G2L["17"]["Position"] = UDim2.new(0, 20, 0, 0);
@@ -364,6 +364,36 @@ local function main()
     G2L["1f"] = Instance.new("UIPadding", G2L["20"]);
     G2L["1f"]["PaddingTop"] = UDim.new(0, 1);
     G2L["1f"]["PaddingBottom"] = UDim.new(0, 1);
+
+    -- StarterGui.ScreenGui.Console.PrintToConsole
+    G2L["21"] = Instance.new("ImageButton", ConsoleFrame);
+    G2L["21"]["BorderSizePixel"] = 0;
+    G2L["21"]["BackgroundColor3"] = Theme.ConsoleButton;
+    G2L["21"]["Size"] = UDim2.new(0, 90, 0, 15);
+    G2L["21"]["BorderColor3"] = Theme.Black;
+    G2L["21"]["Name"] = [[PrintToConsole]];
+    G2L["21"]["Position"] = UDim2.new(0, 174, 0, 4);
+
+    -- StarterGui.ScreenGui.Console.PrintToConsole.TextLabel
+    G2L["22"] = Instance.new("TextLabel", G2L["21"]);
+    G2L["22"]["TextWrapped"] = true;
+    G2L["22"]["Interactable"] = false;
+    G2L["22"]["BorderSizePixel"] = 0;
+    G2L["22"]["TextSize"] = 20;
+    G2L["22"]["TextScaled"] = true;
+    G2L["22"]["BackgroundColor3"] = Theme.White;
+    G2L["22"]["FontFace"] = Font.new([[rbxasset://fonts/families/SourceSansPro.json]], Enum.FontWeight.Regular,
+        Enum.FontStyle.Normal);
+    G2L["22"]["TextColor3"] = Theme.White;
+    G2L["22"]["BackgroundTransparency"] = 1;
+    G2L["22"]["Size"] = UDim2.new(1, 0, 1, 0);
+    G2L["22"]["BorderColor3"] = Theme.Black;
+    G2L["22"]["Text"] = [[Print to RConsole]];
+
+    -- StarterGui.ScreenGui.Console.PrintToConsole.UIPadding
+    G2L["23"] = Instance.new("UIPadding", G2L["21"]);
+    G2L["23"]["PaddingTop"] = UDim.new(0, 1);
+    G2L["23"]["PaddingBottom"] = UDim.new(0, 1);
 
     -- StarterGui.ScreenGui.ConsoleHandler
     G2L["1c"] = Instance.new("LocalScript", G2L["1"]);
@@ -576,6 +606,7 @@ local function main()
 
         local CtrlScroll = false
         local AutoScroll = false
+        local PrintToConsole = false
 
         local LogService = game:GetService("LogService")
         local Players = game:GetService("Players")
@@ -638,6 +669,24 @@ local function main()
                 Console.Output.CanvasPosition = Vector2.new(0, 9e9)
             elseif AutoScroll == false then
                 Console.AutoScroll.BackgroundColor3 = Theme.ConsoleButton
+            end
+        end)
+
+        -- Print to Console functionality
+        Console.PrintToConsole.BackgroundColor3 = Theme.ConsoleButton
+        Console.PrintToConsole.MouseButton1Click:Connect(function()
+            PrintToConsole = not PrintToConsole
+            
+            if PrintToConsole then
+                Console.PrintToConsole.BackgroundColor3 = Theme.ListSelection
+                if rconsolecreate then
+                    pcall(rconsolecreate)
+                end
+            else
+                Console.PrintToConsole.BackgroundColor3 = Theme.ConsoleButton
+                if rconsoledestroy then
+                    pcall(rconsoledestroy)
+                end
             end
         end)
 
@@ -705,15 +754,27 @@ local function main()
             if msgtype == Enum.MessageType.MessageOutput then
                 formattedText = os.date("%H:%M:%S") .. '   <font color="rgb(204, 204, 204)">' .. msg .. '</font>'
                 newOutputText.Text = formattedText
+                if PrintToConsole and rconsoleprint then
+                    pcall(rconsoleprint, unformattedText .. "\n")
+                end
             elseif msgtype == Enum.MessageType.MessageWarning then
                 formattedText = os.date("%H:%M:%S") .. '   <b><font color="rgb(255, 142, 60)">' .. msg .. '</font></b>'
                 newOutputText.Text = formattedText
+                if PrintToConsole and rconsolewarn then
+                    pcall(rconsolewarn, unformattedText .. "\n")
+                end
             elseif msgtype == Enum.MessageType.MessageError then
                 formattedText = os.date("%H:%M:%S") .. '   <b><font color="rgb(255, 68, 68)">' .. msg .. '</font></b>'
                 newOutputText.Text = formattedText
+                if PrintToConsole and rconsoleerror then
+                    pcall(rconsoleerror, unformattedText .. "\n")
+                end
             elseif msgtype == Enum.MessageType.MessageInfo then
                 formattedText = os.date("%H:%M:%S") .. '   <font color="rgb(128, 215, 255)">' .. msg .. '</font>'
                 newOutputText.Text = formattedText
+                if PrintToConsole and rconsoleprint then
+                    pcall(rconsoleprint, unformattedText .. "\n")
+                end
             end
 
             newOutputText.TextSize = OutputTextSize.Value
