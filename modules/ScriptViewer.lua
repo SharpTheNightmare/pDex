@@ -162,10 +162,10 @@ local function main()
 		copy.Text = "Copy to Clipboard"
 		
 		if env.setclipboard then
-			copy.TextColor3 = Color3.new(1,1,1)
+			copy.TextColor3 = Color3.fromRGB(230, 220, 240)
 			copy.Interactable = true
 		else
-			copy.TextColor3 = Color3.new(0.5,0.5,0.5)
+			copy.TextColor3 = Color3.fromRGB(100, 80, 130)
 			copy.Interactable = false
 		end
 
@@ -179,13 +179,13 @@ local function main()
 		save.Size = UDim2.new(0.33,0,0,20)
 		save.Position = UDim2.new(0.33,0,0,0)
 		save.Text = "Save to File"
-		save.TextColor3 = Color3.new(1,1,1)
+		save.TextColor3 = Color3.fromRGB(230, 220, 240)
 		
 		if env.writefile then
-			save.TextColor3 = Color3.new(1,1,1)
+			save.TextColor3 = Color3.fromRGB(230, 220, 240)
 			save.Interactable = true
 		else
-			save.TextColor3 = Color3.new(0.5,0.5,0.5)
+			save.TextColor3 = Color3.fromRGB(100, 80, 130)
 			--save.Interactable = false
 		end
 
@@ -202,13 +202,13 @@ local function main()
 		dumpbtn.Position = UDim2.new(0.7,0,0,0)
 		dumpbtn.Size = UDim2.new(0.3,0,0,20)
 		dumpbtn.Text = "Dump Functions"
-		dumpbtn.TextColor3 = Color3.new(0.5,0.5,0.5)
+		dumpbtn.TextColor3 = Color3.fromRGB(100, 80, 130)
 		
 		if env.getgc then
-			dumpbtn.TextColor3 = Color3.new(1,1,1)
+			dumpbtn.TextColor3 = Color3.fromRGB(230, 220, 240)
 			dumpbtn.Interactable = true
 		else
-			dumpbtn.TextColor3 = Color3.new(0.5,0.5,0.5)
+			dumpbtn.TextColor3 = Color3.fromRGB(100, 80, 130)
 			dumpbtn.Interactable = false
 		end
 
@@ -226,13 +226,13 @@ local function main()
 		execute.Size = UDim2.new(0.5,0,0,20)
 		execute.Position = UDim2.new(0,0,1,-20)
 		execute.Text = "Execute"
-		execute.TextColor3 = Color3.new(1,1,1)
+		execute.TextColor3 = Color3.fromRGB(230, 220, 240)
 		
 		if env.loadstring then
-			execute.TextColor3 = Color3.new(1,1,1)
+			execute.TextColor3 = Color3.fromRGB(230, 220, 240)
 			execute.Interactable = true
 		else
-			execute.TextColor3 = Color3.new(0.5,0.5,0.5)
+			execute.TextColor3 = Color3.fromRGB(100, 80, 130)
 			execute.Interactable = false
 		end
 
@@ -246,7 +246,7 @@ local function main()
 		clear.Size = UDim2.new(0.5,0,0,20)
 		clear.Position = UDim2.new(0.5,0,1,-20)
 		clear.Text = "Clear"
-		clear.TextColor3 = Color3.new(1,1,1)
+		clear.TextColor3 = Color3.fromRGB(230, 220, 240)
 
 		clear.MouseButton1Click:Connect(function()
 			codeFrame:SetText("")
@@ -259,7 +259,7 @@ local function main()
 
 		if not s or not source then
 			PreviousScr = nil
-			dumpbtn.TextColor3 = Color3.new(0.5,0.5,0.5)
+			dumpbtn.TextColor3 = Color3.fromRGB(100, 80, 130)
 			source = "-- Unable to view source.\n"
 			source = source .. "-- Script Path: "..getPath(scr).."\n"
 			if (scr.ClassName == "Script" and (scr.RunContext == Enum.RunContext.Legacy or scr.RunContext == Enum.RunContext.Server)) or not scr:IsA("LocalScript") then
@@ -272,7 +272,7 @@ local function main()
 			source = source .. "-- Executor: "..executorName.." ("..executorVersion..")"
 		else
 			PreviousScr = scr
-			dumpbtn.TextColor3 = Color3.new(1,1,1)
+			dumpbtn.TextColor3 = Color3.fromRGB(230, 220, 240)
 
 			local decompiled = source
 
@@ -293,9 +293,4 @@ local function main()
 	return ScriptViewer
 end
 
--- TODO: Remove when open source
-if gethsfuncs then
-	_G.moduleData = {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}
-else
-	return {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}
-end
+return {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}

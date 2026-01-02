@@ -122,21 +122,22 @@ local function main()
 		local insts = getDescendants(root)
 		for i = 1,#insts do
 			local obj = insts[i]
-			if nodes[obj] then continue end -- Deferred
+			if not nodes[obj] then -- Deferred
+				local par = nodes[ffa(obj,"Instance")]
+				if par then
+					local newNode = {Obj = obj, Parent = par}
+					nodes[obj] = newNode
+					par[#par+1] = newNode
 
-			local par = nodes[ffa(obj,"Instance")]
-			if not par then continue end
-			local newNode = {Obj = obj, Parent = par}
-			nodes[obj] = newNode
-			par[#par+1] = newNode
-
-			-- Nil Handling
-			if isNil then
-				nilMap[obj] = true
-				nilCons[obj] = nilCons[obj] or {
-					connectSignal(obj.ChildAdded,addObject),
-					connectSignal(obj.AncestryChanged,moveObject),
-				}
+					-- Nil Handling
+					if isNil then
+						nilMap[obj] = true
+						nilCons[obj] = nilCons[obj] or {
+							connectSignal(obj.ChildAdded,addObject),
+							connectSignal(obj.AncestryChanged,moveObject),
+						}
+					end
+				end
 			end
 		end
 
@@ -278,7 +279,7 @@ local function main()
 	Explorer.GuiElems = {}
 
 	Explorer.InitRenameBox = function()
-		renameBox = create({{1,"TextBox",{BackgroundColor3=Color3.new(0.17647059261799,0.17647059261799,0.17647059261799),BorderColor3=Color3.new(0.062745101749897,0.51764708757401,1),BorderMode=2,ClearTextOnFocus=false,Font=3,Name="RenameBox",PlaceholderColor3=Color3.new(0.69803923368454,0.69803923368454,0.69803923368454),Position=UDim2.new(0,26,0,2),Size=UDim2.new(0,200,0,16),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,Visible=false,ZIndex=2}}})
+		renameBox = create({{1,"TextBox",{BackgroundColor3=Color3.new(0.17647059261799,0.17647059261799,0.17647059261799),BorderColor3=Color3.new(0.062745101749897,0.51764708757401,1),BorderMode=2,ClearTextOnFocus=false,Font=3,Name="RenameBox",PlaceholderColor3=Color3.new(0.69803923368454,0.69803923368454,0.69803923368454),Position=UDim2.new(0,26,0,2),Size=UDim2.new(0,200,0,16),Text="",TextColor3=Color3.fromRGB(230, 220, 240),TextSize=14,TextXAlignment=0,Visible=false,ZIndex=2}}})
 
 		renameBox.Parent = Explorer.Window.GuiElems.Content.List
 
@@ -396,9 +397,8 @@ local function main()
 			for i = 1,#root do
 				local n = root[i]
 
-				if (isSearching and not searchResults[n]) or n.Del then continue end
-
-				if useNameWidth then
+				if not ((isSearching and not searchResults[n]) or n.Del) then
+					if useNameWidth then
 					local nameWidth = n.NameWidth
 					if not nameWidth then
 						local objName = tostring(n.Obj)
@@ -418,6 +418,7 @@ local function main()
 				count = count + 1
 				if expanded[n] and #n > 0 then
 					recur(n,depth)
+				end
 				end
 			end
 		end
@@ -470,11 +471,11 @@ local function main()
 		Lib.ShowGui(newGui)
 
 		local dragOutline = create({
-			{1,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Name="DragSelect",Size=UDim2.new(1,0,1,0),}},
-			{2,"Frame",{BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,Name="Line",Parent={1},Size=UDim2.new(1,0,0,1),ZIndex=2,}},
-			{3,"Frame",{BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,Name="Line",Parent={1},Position=UDim2.new(0,0,1,-1),Size=UDim2.new(1,0,0,1),ZIndex=2,}},
-			{4,"Frame",{BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,Name="Line",Parent={1},Size=UDim2.new(0,1,1,0),ZIndex=2,}},
-			{5,"Frame",{BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,Name="Line",Parent={1},Position=UDim2.new(1,-1,0,0),Size=UDim2.new(0,1,1,0),ZIndex=2,}},
+			{1,"Frame",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,Name="DragSelect",Size=UDim2.new(1,0,1,0),}},
+			{2,"Frame",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BorderSizePixel=0,Name="Line",Parent={1},Size=UDim2.new(1,0,0,1),ZIndex=2,}},
+			{3,"Frame",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BorderSizePixel=0,Name="Line",Parent={1},Position=UDim2.new(0,0,1,-1),Size=UDim2.new(1,0,0,1),ZIndex=2,}},
+			{4,"Frame",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BorderSizePixel=0,Name="Line",Parent={1},Size=UDim2.new(0,1,1,0),ZIndex=2,}},
+			{5,"Frame",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BorderSizePixel=0,Name="Line",Parent={1},Position=UDim2.new(1,-1,0,0),Size=UDim2.new(0,1,1,0),ZIndex=2,}},
 		})
 		dragOutline.Parent = treeFrame
 
@@ -2212,12 +2213,12 @@ return search]==]
 
 	Explorer.InitEntryTemplate = function()
 		entryTemplate = create({
-			{1,"TextButton",{AutoButtonColor=false,BackgroundColor3=Color3.new(0,0,0),BackgroundTransparency=1,BorderColor3=Color3.new(0,0,0),Font=3,Name="Entry",Position=UDim2.new(0,1,0,1),Size=UDim2.new(0,250,0,20),Text="",TextSize=14,}},
+			{1,"TextButton",{AutoButtonColor=false,BackgroundColor3=Color3.fromRGB(25, 20, 35),BackgroundTransparency=1,BorderColor3=Color3.fromRGB(25, 20, 35),Font=3,Name="Entry",Position=UDim2.new(0,1,0,1),Size=UDim2.new(0,250,0,20),Text="",TextSize=14,}},
 			{2,"Frame",{BackgroundColor3=Color3.new(0.04313725605607,0.35294118523598,0.68627452850342),BackgroundTransparency=1,BorderColor3=Color3.new(0.33725491166115,0.49019610881805,0.73725491762161),BorderSizePixel=0,Name="Indent",Parent={1},Position=UDim2.new(0,20,0,0),Size=UDim2.new(1,-20,1,0),}},
-			{3,"TextLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Font=3,Name="EntryName",Parent={2},Position=UDim2.new(0,26,0,0),Size=UDim2.new(1,-26,1,0),Text="Workspace",TextColor3=Color3.new(0.86274516582489,0.86274516582489,0.86274516582489),TextSize=14,TextXAlignment=0,}},
-			{4,"TextButton",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,ClipsDescendants=true,Font=3,Name="Expand",Parent={2},Position=UDim2.new(0,-20,0,0),Size=UDim2.new(0,20,0,20),Text="",TextSize=14,}},
-			{5,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image="rbxassetid://5642383285",ImageRectOffset=Vector2.new(144,16),ImageRectSize=Vector2.new(16,16),Name="Icon",Parent={4},Position=UDim2.new(0,2,0,2),ScaleType=4,Size=UDim2.new(0,16,0,16),}},
-			{6,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,ImageRectOffset=Vector2.new(304,0),ImageRectSize=Vector2.new(16,16),Name="Icon",Parent={2},Position=UDim2.new(0,4,0,2),ScaleType=4,Size=UDim2.new(0,16,0,16),}},
+			{3,"TextLabel",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,Font=3,Name="EntryName",Parent={2},Position=UDim2.new(0,26,0,0),Size=UDim2.new(1,-26,1,0),Text="Workspace",TextColor3=Color3.new(0.86274516582489,0.86274516582489,0.86274516582489),TextSize=14,TextXAlignment=0,}},
+			{4,"TextButton",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,ClipsDescendants=true,Font=3,Name="Expand",Parent={2},Position=UDim2.new(0,-20,0,0),Size=UDim2.new(0,20,0,20),Text="",TextSize=14,}},
+			{5,"ImageLabel",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,Image="rbxassetid://5642383285",ImageRectOffset=Vector2.new(144,16),ImageRectSize=Vector2.new(16,16),Name="Icon",Parent={4},Position=UDim2.new(0,2,0,2),ScaleType=4,Size=UDim2.new(0,16,0,16),}},
+			{6,"ImageLabel",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,ImageRectOffset=Vector2.new(304,0),ImageRectSize=Vector2.new(16,16),Name="Icon",Parent={2},Position=UDim2.new(0,4,0,2),ScaleType=4,Size=UDim2.new(0,16,0,16),}},
 		})
 
 		local sys = Lib.ClickSystem.new()
@@ -2381,7 +2382,7 @@ return search]==]
 			Explorer.SelectionVisualCons = {}
 
 			local guiTemplate = create({
-				{1,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Size=UDim2.new(0,100,0,100),}},
+				{1,"Frame",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,Size=UDim2.new(0,100,0,100),}},
 				{2,"Frame",{BackgroundColor3=Color3.new(0.04313725605607,0.35294118523598,0.68627452850342),BorderSizePixel=0,Parent={1},Position=UDim2.new(0,-1,0,-1),Size=UDim2.new(1,2,0,1),}},
 				{3,"Frame",{BackgroundColor3=Color3.new(0.04313725605607,0.35294118523598,0.68627452850342),BorderSizePixel=0,Parent={1},Position=UDim2.new(0,-1,1,0),Size=UDim2.new(1,2,0,1),}},
 				{4,"Frame",{BackgroundColor3=Color3.new(0.04313725605607,0.35294118523598,0.68627452850342),BorderSizePixel=0,Parent={1},Position=UDim2.new(0,-1,0,0),Size=UDim2.new(0,1,1,0),}},
@@ -2482,15 +2483,15 @@ return search]==]
 			{1,"Folder",{Name="ExplorerItems",}},
 			{2,"Frame",{BackgroundColor3=Color3.new(0.20392157137394,0.20392157137394,0.20392157137394),BorderSizePixel=0,Name="ToolBar",Parent={1},Size=UDim2.new(1,0,0,22),}},
 			{3,"Frame",{BackgroundColor3=Color3.new(0.14901961386204,0.14901961386204,0.14901961386204),BorderColor3=Color3.new(0.1176470592618,0.1176470592618,0.1176470592618),BorderSizePixel=0,Name="SearchFrame",Parent={2},Position=UDim2.new(0,3,0,1),Size=UDim2.new(1,-6,0,18),}},
-			{4,"TextBox",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,ClearTextOnFocus=false,Font=3,Name="SearchBox",Parent={3},PlaceholderColor3=Color3.new(0.39215689897537,0.39215689897537,0.39215689897537),PlaceholderText="Search workspace",Position=UDim2.new(0,4,0,0),Size=UDim2.new(1,-24,0,18),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,TextXAlignment=0,}},
+			{4,"TextBox",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,ClearTextOnFocus=false,Font=3,Name="SearchBox",Parent={3},PlaceholderColor3=Color3.new(0.39215689897537,0.39215689897537,0.39215689897537),PlaceholderText="Search workspace",Position=UDim2.new(0,4,0,0),Size=UDim2.new(1,-24,0,18),Text="",TextColor3=Color3.fromRGB(230, 220, 240),TextSize=14,TextXAlignment=0,}},
 			{5,"UICorner",{CornerRadius=UDim.new(0,2),Parent={3},}},
 			{6,"UIStroke",{Thickness=1.4,Parent={3},Color=Color3.fromRGB(42,42,42)}},
-			{7,"TextButton",{AutoButtonColor=false,BackgroundColor3=Color3.new(0.12549020349979,0.12549020349979,0.12549020349979),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="Reset",Parent={3},Position=UDim2.new(1,-17,0,1),Size=UDim2.new(0,16,0,16),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,}},
-			{8,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image="rbxassetid://5034718129",ImageColor3=Color3.new(0.39215686917305,0.39215686917305,0.39215686917305),Parent={7},Size=UDim2.new(0,16,0,16),}},
-			{9,"TextButton",{AutoButtonColor=false,BackgroundColor3=Color3.new(0.12549020349979,0.12549020349979,0.12549020349979),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="Refresh",Parent={2},Position=UDim2.new(1,-20,0,1),Size=UDim2.new(0,18,0,18),Text="",TextColor3=Color3.new(1,1,1),TextSize=14,Visible=false,}},
-			{10,"ImageLabel",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,Image="rbxassetid://5642310344",Parent={9},Position=UDim2.new(0,3,0,3),Size=UDim2.new(0,12,0,12),}},
+			{7,"TextButton",{AutoButtonColor=false,BackgroundColor3=Color3.new(0.12549020349979,0.12549020349979,0.12549020349979),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="Reset",Parent={3},Position=UDim2.new(1,-17,0,1),Size=UDim2.new(0,16,0,16),Text="",TextColor3=Color3.fromRGB(230, 220, 240),TextSize=14,}},
+			{8,"ImageLabel",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,Image="rbxassetid://5034718129",ImageColor3=Color3.new(0.39215686917305,0.39215686917305,0.39215686917305),Parent={7},Size=UDim2.new(0,16,0,16),}},
+			{9,"TextButton",{AutoButtonColor=false,BackgroundColor3=Color3.new(0.12549020349979,0.12549020349979,0.12549020349979),BackgroundTransparency=1,BorderSizePixel=0,Font=3,Name="Refresh",Parent={2},Position=UDim2.new(1,-20,0,1),Size=UDim2.new(0,18,0,18),Text="",TextColor3=Color3.fromRGB(230, 220, 240),TextSize=14,Visible=false,}},
+			{10,"ImageLabel",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,Image="rbxassetid://5642310344",Parent={9},Position=UDim2.new(0,3,0,3),Size=UDim2.new(0,12,0,12),}},
 			{11,"Frame",{BackgroundColor3=Color3.new(0.15686275064945,0.15686275064945,0.15686275064945),BorderSizePixel=0,Name="ScrollCorner",Parent={1},Position=UDim2.new(1,-16,1,-16),Size=UDim2.new(0,16,0,16),Visible=false,}},
-			{12,"Frame",{BackgroundColor3=Color3.new(1,1,1),BackgroundTransparency=1,ClipsDescendants=true,Name="List",Parent={1},Position=UDim2.new(0,0,0,23),Size=UDim2.new(1,0,1,-23),}}
+			{12,"Frame",{BackgroundColor3=Color3.fromRGB(230, 220, 240),BackgroundTransparency=1,ClipsDescendants=true,Name="List",Parent={1},Position=UDim2.new(0,0,0,23),Size=UDim2.new(1,0,1,-23),}}
 		})
 
 		toolBar = explorerItems.ToolBar
@@ -2575,26 +2576,28 @@ return search]==]
 			for i = 1,#insts do
 				local obj = insts[i]
 				local par = nodes[ffa(obj,"Instance")]
-				if not par then continue end
-				local newNode = {
-					Obj = obj,
-					Parent = par,
-				}
-				nodes[obj] = newNode
-				par[#par+1] = newNode
+				if par then
+					local newNode = {
+						Obj = obj,
+						Parent = par,
+					}
+					nodes[obj] = newNode
+					par[#par+1] = newNode
+				end
 			end
 		else
 			for i = 1,#insts do
 				local obj = insts[i]
 				local s,parObj = pcall(ffa,obj,"Instance")
 				local par = nodes[parObj]
-				if not par then continue end
-				local newNode = {
-					Obj = obj,
-					Parent = par,
-				}
-				nodes[obj] = newNode
-				par[#par+1] = newNode
+				if par then
+					local newNode = {
+						Obj = obj,
+						Parent = par,
+					}
+					nodes[obj] = newNode
+					par[#par+1] = newNode
+				end
 			end
 		end
 	end

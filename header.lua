@@ -1,10 +1,11 @@
 --[[
-	Dex++
-	Version 2.2
+	pDex
+	Version {{VERSION}}
 	
 	Developed by Chillz
+	Modified by SharpTheNightmare
 	
-	Dex++ is a revival of Moon's Dex, made to fulfill Moon's Dex prophecy.
+	pDex (Modified Dex++)  is a revival of Moon's Dex, made to fulfill Moon's Dex prophecy.
 ]]
 
 local selection

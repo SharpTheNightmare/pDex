@@ -529,7 +529,7 @@ local function main()
 
 							inComment = false
 						elseif source:sub(i - 1, i) == "]]" and commentPersist then
-							currentToken ..= "]"
+							currentToken = currentToken .. "]"
 
 							table.insert(tokens, currentToken)
 							currentToken = ""
@@ -779,12 +779,24 @@ local function main()
 
 
 
-		Console.CommandLine.ScrollingFrame.TextBox.FocusLost:Connect(function(enterPressed)
-			if enterPressed and Console.CommandLine.ScrollingFrame.TextBox.Text ~= "" then
-				print("> "..Console.CommandLine.ScrollingFrame.TextBox.Text)
-				loadstring(Console.CommandLine.ScrollingFrame.TextBox.Text)()
+	Console.CommandLine.ScrollingFrame.TextBox.FocusLost:Connect(function(enterPressed)
+		if enterPressed and Console.CommandLine.ScrollingFrame.TextBox.Text ~= "" then
+			local code = Console.CommandLine.ScrollingFrame.TextBox.Text
+			print("> "..code)
+			
+			local success, result = pcall(function()
+				local func, err = loadstring(code)
+				if not func then
+					error("Syntax Error: " .. tostring(err))
+				end
+				return func()
+			end)
+			
+			if not success then
+				warn(tostring(result))
 			end
-		end)
+		end
+	end)
 	end
 
 	return Console

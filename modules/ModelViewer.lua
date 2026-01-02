@@ -83,10 +83,12 @@ local function main()
 				model = Instance.new("Model")
 				model.Parent = viewportFrame
 
-				local clone = item:Clone()
-				clone.Parent = model
-				model.PrimaryPart = clone
-				model:SetPrimaryPartCFrame(CFrame.new(0, 0, 0))
+			local clone = item:Clone()
+			clone.Parent = model
+			model.PrimaryPart = clone
+			-- FIX: Center the model instead of positioning at bottom
+			local cf, size = model:GetBoundingBox()
+			model:SetPrimaryPartCFrame(CFrame.new(0, 0, 0) - (cf.Position - model.PrimaryPart.Position))
 			elseif item:IsA("Model") then
 				item.Archivable = true
 
@@ -105,7 +107,9 @@ local function main()
 					for _, child in model:GetDescendants() do
 						if child:IsA("BasePart") then
 							model.PrimaryPart = child
-							model:SetPrimaryPartCFrame(CFrame.new(0, 0, 0))
+							-- FIX: Center the model instead of positioning at bottom
+							local cf, size = model:GetBoundingBox()
+							model:SetPrimaryPartCFrame(CFrame.new(0, 0, 0) - (cf.Position - model.PrimaryPart.Position))
 							found = true
 							break
 						end
@@ -134,11 +138,20 @@ local function main()
 		end
 		
 		if not updating then
+			-- FIX: Proper camera and lighting setup for viewport
 			camera = Instance.new("Camera")
 			viewportFrame.CurrentCamera = camera
-
 			camera.Parent = viewportFrame
 			camera.FieldOfView = 60
+			
+			-- Add lighting to ensure models are visible
+			local lighting = Instance.new("WorldModel")
+			lighting.Parent = viewportFrame
+			
+			local light = Instance.new("PointLight")
+			light.Brightness = 2
+			light.Range = 100
+			light.Parent = model
 			
 			window:SetTitle(item.Name.." - 3D Preview")
 			pathLabel.Gui.Text = "path: " .. getPath(originalModel)
@@ -221,8 +234,8 @@ local function main()
 				local delta = input.Position - lastpos
 				lastpos = input.Position
 
-				rotationY -= delta.X * 0.01
-				rotationX -= delta.Y * 0.01
+				rotationY = rotationY - delta.X * 0.01
+				rotationX = rotationX - delta.Y * 0.01
 				rotationX = math.clamp(rotationX, -math.pi/2 + 0.1, math.pi/2 - 0.1)
 			end
 
@@ -234,7 +247,7 @@ local function main()
 		RunService.RenderStepped:Connect(function()
 			if camera and model then
 				if not dragging and ModelViewer.AutoRotate then
-					rotationY += ModelViewer.RotationSpeed
+					rotationY = rotationY + ModelViewer.RotationSpeed
 				end
 				
 				local center = model.PrimaryPart.Position
@@ -397,9 +410,4 @@ local function main()
 	return ModelViewer
 end
 
--- TODO: Remove when open source
-if gethsfuncs then
-	_G.moduleData = {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}
-else
-	return {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}
-end
+return {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}

@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+    paths:
+      - 'VERSION'
   workflow_dispatch:
 
 jobs:
@@ -31,7 +33,9 @@ jobs:
         with:
           name: pDex ${{ steps.version.outputs.version }}
           tag_name: v${{ steps.version.outputs.version }}
-          files: pDex.lua
+          files: |
+            pDex.lua
+            pdexplugin.lua
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

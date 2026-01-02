@@ -8,6 +8,7 @@ def readfile(path):
 version = readfile("VERSION").strip()
 
 headerText = readfile("header.lua")
+headerText = headerText.replace('{{VERSION}}', f'{version}')
 embedStr = headerText + "\n\nlocal EmbeddedModules = {\n"
 
 files = os.listdir("modules")

@@ -48,7 +48,8 @@ local function main()
 		MaxThreads = 3,
 		ShowStatus = true,
 		IgnoreDefaultProps = true,
-		IsolateStarterPlayer = true
+		IsolateStarterPlayer = true,
+		Timeout = 300
 	}
 	
 	local function AddCheckbox(title, default)
@@ -272,29 +273,58 @@ local function main()
 		Button.Position = UDim2.new(0,0, 0,0)
 		Button.Transparency = 1
 		
-		FilenameTextBox.TextBox.Text = fileName
-		Button.MouseButton1Click:Connect(function()
-			local fileName = FilenameTextBox.TextBox.Text:gsub("{TIMESTAMP}", os.date("%d-%m-%Y_%H-%M-%S"))
-			window:SetTitle("Save Instance - Saving")
-			local s, result = pcall(env.saveinstance, game, fileName, SaveInstanceArgs)
-			if s then
-				window:SetTitle("Save Instance - Saved")
+	FilenameTextBox.TextBox.Text = fileName
+	Button.MouseButton1Click:Connect(function()
+		if Saving then
+			warn("Save already in progress. Please wait.")
+			return
+		end
+		
+		if not env.saveinstance then
+			window:SetTitle("Save Instance - Error")
+			warn("saveinstance function not available in this executor")
+			task.wait(3)
+			window:SetTitle("Save Instance")
+			return
+		end
+		
+		local fileName = FilenameTextBox.TextBox.Text:gsub("{TIMESTAMP}", os.date("%d-%m-%Y_%H-%M-%S"))
+		if fileName == "" or fileName:match("^%s*$") then
+			warn("Invalid filename. Please enter a valid name.")
+			return
+		end
+		
+		Saving = true
+		Button.Active = false
+		window:SetTitle("Save Instance - Saving...")
+		
+		task.spawn(function()
+			local startTime = tick()
+			local success, result = pcall(function()
+				return env.saveinstance(game, fileName, SaveInstanceArgs)
+			end)
+			
+			local duration = math.floor(tick() - startTime)
+			
+			if success then
+				window:SetTitle("Save Instance - Saved! (" .. duration .. "s)")
+				print("Successfully saved to: " .. fileName)
 			else
 				window:SetTitle("Save Instance - Error")
-				task.spawn(error("Failed to save the game: "..result))
+				warn("Failed to save: " .. tostring(result))
 			end
+			
 			task.wait(5)
-			window:SetTitle("Save Instance")
-			---env.saveinstance(game, fileName, SaveInstanceArgs)
+			if window and window.SetTitle then
+				window:SetTitle("Save Instance")
+			end
+			Saving = false
+			Button.Active = true
 		end)
+	end)
 	end
 
 	return SaveInstance
 end
 
--- TODO: Remove when open source
-if gethsfuncs then
-	_G.moduleData = {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}
-else
-	return {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}
-end
+return {InitDeps = initDeps, InitAfterMain = initAfterMain, Main = main}
