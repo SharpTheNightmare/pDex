@@ -1473,7 +1473,8 @@ local function main()
                         if Obj.CanCollide then
                             plr.Character:MoveTo(Obj.Position)
                         else
-                            plrRP.CFrame = CFrame.new(Obj.Position + Settings.Explorer.TeleportToOffset)
+                            local offset = Settings.Explorer.TeleportToOffset or Vector3.new(0, 0, 0)
+                            plrRP.CFrame = CFrame.new(Obj.Position + offset)
                         end
                         break
                     elseif Obj:IsA("Model") then
@@ -1481,7 +1482,8 @@ local function main()
                             if Obj.PrimaryPart.CanCollide then
                                 plr.Character:MoveTo(Obj.PrimaryPart.Position)
                             else
-                                plrRP.CFrame = CFrame.new(Obj.PrimaryPart.Position + Settings.Explorer.TeleportToOffset)
+                                local offset = Settings.Explorer.TeleportToOffset or Vector3.new(0, 0, 0)
+                                plrRP.CFrame = CFrame.new(Obj.PrimaryPart.Position + offset)
                             end
                             break
                         else
@@ -1490,7 +1492,8 @@ local function main()
                                 if part.CanCollide then
                                     plr.Character:MoveTo(part.Position)
                                 else
-                                    plrRP.CFrame = CFrame.new(part.Position + Settings.Explorer.TeleportToOffset)
+                                    local offset = Settings.Explorer.TeleportToOffset or Vector3.new(0, 0, 0)
+                                    plrRP.CFrame = CFrame.new(part.Position + offset)
                                 end
                                 break
                             elseif Obj.WorldPivot then
