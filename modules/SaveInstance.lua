@@ -49,7 +49,6 @@ local function main()
         ShowStatus = true,
         IgnoreDefaultProps = true,
         IsolateStarterPlayer = true,
-        Timeout = 300
     }
 
     local function AddCheckbox(title, default)
