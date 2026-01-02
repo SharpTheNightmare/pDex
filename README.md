@@ -1,17 +1,17 @@
-# Dex++
-![Preview](https://raw.githubusercontent.com/AZYsGithub/DexPlusPlus/main/preview.png)
+# pDex
+![Preview](https://raw.githubusercontent.com/SharpTheNightmare/pDex/main/preview.png)
 
-Dex++ is an extended version of Moon's Dex, made to fulfill some Moon's Dex prophecy.
+pDex is an extended version of Moon's Dex, made to fulfill some Moon's Dex prophecy.
 
 ## Latest Version Script
 ```lua
-loadstring(game:HttpGet("https://github.com/AZYsGithub/DexPlusPlus/releases/latest/download/out.lua"))()
+loadstring(game:HttpGet("https://github.com/SharpTheNightmare/pDex/releases/latest/download/out.lua"))()
 ```
-For specific versions, go to [releases](https://github.com/AZYsGithub/DexPlusPlus/releases).
+For specific versions, go to [releases](https://github.com/SharpTheNightmare/pDex/releases).
 
-## What's the difference between Dex and Dex++?
+## What's the difference between Dex and pDex?
 Since the original Dex is the last release and Moon have discontinued it, it still has some missing features.
-Here are the features that were added/fixed in Dex++
+Here are the features that were added/fixed in pDex
 - Using New Roblox Studio Icons
 - Updated API
 - Uses Konstant as fallback decompiler (for shitsploits who doesn't have it)
@@ -47,12 +47,12 @@ Every donation is highly apreciated, this is compeletely optional.
 - [UniversalSynapseSaveInstance (USSI)](https://github.com/luau/UniversalSynSaveInstance)
 
 ## License
-[![Dex++ License](https://img.shields.io/badge/Dex++-License-green)](https://github.com/AZYsGithub/DexPlusPlus/blob/main/LICENSE)
+[![pDex License](https://img.shields.io/badge/pDex-License-green)](https://github.com/SharpTheNightmare/pDex/blob/main/LICENSE)
 
 [![USSI License](https://img.shields.io/badge/USSI-License-green)](https://github.com/luau/UniversalSynSaveInstance/blob/main/LICENSE)
 
 ## Credits
-- [Chillz](https://github.com/AZYsGithub) – Dex++ Maintainer  
+- [Chillz](https://github.com/AZYsGithub) – pDex Maintainer  
 - [Cazan](https://github.com/Cazzanos) – Helped me develop the Model Viewer  
 - [Moon](https://github.com/LorekeeperZinnia/Dex) – Original Dex Explorer  
 - [Toon](https://github.com/Toon-arch) – Contributor and IY's Dex parts and components
