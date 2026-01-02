@@ -35,7 +35,7 @@ jobs:
           tag_name: v${{ steps.version.outputs.version }}
           files: |
             pDex.lua
-            pdexplugin.lua
+            pDexPlugin.iy
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
