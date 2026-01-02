@@ -264,12 +264,34 @@ local function main()
 
     ScriptViewer.ViewScript = function(scr)
         local oldtick = tick()
-        local s, source = pcall(env.decompile or function()
-        end, scr)
-
-        if not s or not source then
+        local decompFunc = env.decompile or decompile
+        
+        if not decompFunc then
             PreviousScr = nil
             dumpbtn.TextColor3 = Theme.PlaceholderText
+            source = "-- Unable to view source.\n"
+            source = source .. "-- Script Path: " .. getPath(scr) .. "\n"
+            source = source .. "-- Reason: Your executor does not support decompiler. (missing 'decompile' function)\n"
+            source = source .. "-- Executor: " .. executorName .. " (" .. executorVersion .. ")"
+            codeFrame:SetText(source)
+            window:Show()
+            return
+        end
+        
+        local s, source = pcall(decompFunc, scr)
+        
+        -- Check if decompiler returned an error message (common pattern: starts with "--")
+        local isErrorMessage = s and source and type(source) == "string" and (
+            source:match("^%-%- Failed") or 
+            source:match("^%-%- Error") or
+            source:match("^%-%- Unable") or
+            #source < 50  -- Very short responses are usually errors
+        )
+
+        if not s or not source or source == "" or isErrorMessage then
+            PreviousScr = nil
+            dumpbtn.TextColor3 = Theme.PlaceholderText
+            local errorMsg = tostring(source)
             source = "-- Unable to view source.\n"
             source = source .. "-- Script Path: " .. getPath(scr) .. "\n"
             if (scr.ClassName == "Script" and
@@ -277,11 +299,14 @@ local function main()
                 not scr:IsA("LocalScript") then
                 source = source ..
                              "-- Reason: The script is not running on client. (attempt to decompile ServerScript or 'Script' with RunContext Server)\n"
-            elseif not env.decompile then
-                source = source ..
-                             "-- Reason: Your executor does not support decompiler. (missing 'decompile' function)\n"
+            elseif not s then
+                source = source .. "-- Reason: Decompile function threw an error\n"
+                source = source .. "-- Error: " .. errorMsg .. "\n"
+            elseif isErrorMessage then
+                source = source .. "-- Reason: Decompiler returned an error\n"
+                source = source .. "-- Message from decompiler: " .. errorMsg .. "\n"
             else
-                source = source .. "-- Reason: Unknown\n"
+                source = source .. "-- Reason: Decompile returned empty or nil\n"
             end
             source = source .. "-- Executor: " .. executorName .. " (" .. executorVersion .. ")"
         else
