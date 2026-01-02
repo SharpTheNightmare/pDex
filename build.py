@@ -17,7 +17,7 @@ def addModuleFile(path):
     global embedStr
     moduleName = os.path.splitext(os.path.basename(path))[0]
     moduleSource = readfile(path)
-    embedStr = embedStr + '["' + moduleName + '"] = function()\n' + moduleSource + '\nend,\n'
+    embedStr = embedStr + '["' + moduleName + '"] = function()\n' + moduleSource + '\nend, \n'
 
 for filename in files:
     addModuleFile("modules/" + filename)

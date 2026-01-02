@@ -6,8 +6,7 @@ local Plugin = {
             ["ListName"] = "pdex",
             ["Description"] = "Loads pDex (Modified Dex++) by SharpTheNightmare.",
             ["Aliases"] = {'pdex'},
-            ["Function"] = function(args,speaker)
-		    -- loads latest dex
+            ["Function"] = function(args, speaker)
                 loadstring(game:HttpGet("https://github.com/SharpTheNightmare/pDex/releases/latest/download/pDex.lua"))()
             end
         }
