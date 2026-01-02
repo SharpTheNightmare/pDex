@@ -1222,7 +1222,7 @@ Main = (function()
             Font = 3,
             Name = "Creator",
             Parent = {2},
-            Position = UDim2.new(1, -110, 1, -20),
+            Position = UDim2.new(1, -110, 1, -35),
             Size = UDim2.new(0, 105, 0, 20),
             Text = "Developed by Chillz.",
             TextColor3 = Settings.Theme.Text,
@@ -1235,18 +1235,33 @@ Main = (function()
             BackgroundColor3 = Settings.Theme.Text,
             BackgroundTransparency = 1,
             Font = 3,
-            Name = "Version",
+            Name = "Modifier",
             Parent = {2},
-            Position = UDim2.new(1, -110, 1, -35),
-            Size = UDim2.new(0, 105, 0, 20),
-            Text = Main.Version,
+            Position = UDim2.new(1, -155, 1, -20),
+            Size = UDim2.new(0, 150, 0, 20),
+            Text = "Modified by SharpTheNightmare.",
             TextColor3 = Settings.Theme.Text,
             TextSize = 14,
             TextXAlignment = 1
         }}, {14, "UIGradient", {
             Parent = {13},
             Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1, 0), NumberSequenceKeypoint.new(1, 1, 0)})
-        }}, {15, "ImageLabel", {
+        }}, {15, "TextLabel", {
+            BackgroundColor3 = Settings.Theme.Text,
+            BackgroundTransparency = 1,
+            Font = 3,
+            Name = "Version",
+            Parent = {2},
+            Position = UDim2.new(1, -110, 1, -50),
+            Size = UDim2.new(0, 105, 0, 20),
+            Text = Main.Version,
+            TextColor3 = Settings.Theme.Text,
+            TextSize = 14,
+            TextXAlignment = 1
+        }}, {16, "UIGradient", {
+            Parent = {15},
+            Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1, 0), NumberSequenceKeypoint.new(1, 1, 0)})
+        }}, {17, "ImageLabel", {
             BackgroundColor3 = Settings.Theme.Text,
             BackgroundTransparency = 1,
             BorderSizePixel = 0,
@@ -1258,15 +1273,15 @@ Main = (function()
             Size = UDim2.new(1, 10, 1, 10),
             SliceCenter = Rect.new(6, 6, 25, 25),
             TileSize = UDim2.new(0, 20, 0, 20)
-        }}, {16, "UIGradient", {
-            Parent = {15},
+        }}, {18, "UIGradient", {
+            Parent = {17},
             Rotation = -30,
             Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1, 0), NumberSequenceKeypoint.new(1, 1, 0)})
-        }}, {17, "UIGradient", {
+        }}, {19, "UIGradient", {
             Parent = {2},
             Rotation = -30,
             Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 1, 0), NumberSequenceKeypoint.new(1, 1, 0)})
-        }}, {18, "UIDragDetector", {
+        }}, {20, "UIDragDetector", {
             Parent = {2}
         }}})
         Main.ShowGui(gui)
@@ -1279,6 +1294,8 @@ Main = (function()
         local versionGradient = versionText.UIGradient
         local creatorText = gui.Main.Creator
         local creatorGradient = creatorText.UIGradient
+        local modifierText = gui.Main.Modifier
+        local modifierGradient = modifierText.UIGradient
         local statusText = gui.Main.Holder.StatusText
         local progressBar = gui.Main.Holder.ProgressBar
         local tweenS = service.TweenService
@@ -1364,6 +1381,7 @@ Main = (function()
         end
         rightTextTransparency(versionGradient)
         rightTextTransparency(creatorGradient)
+        rightTextTransparency(modifierGradient)
 
         fastwait(0.9)
 
@@ -1398,6 +1416,9 @@ Main = (function()
                 TextTransparency = 1
             }):Play()
             tweenS:Create(creatorText, progressTI, {
+                TextTransparency = 1
+            }):Play()
+            tweenS:Create(modifierText, progressTI, {
                 TextTransparency = 1
             }):Play()
             tweenS:Create(statusText, progressTI, {
@@ -1455,8 +1476,11 @@ Main = (function()
 
     Main.CreateApp = function(data)
         if Main.MenuApps[data.Name] then
-            return
-        end -- TODO: Handle conflict
+            if DEBUG then
+                warn("[pDex] App with name '" .. data.Name .. "' already exists. Returning existing control.")
+            end
+            return Main.MenuApps[data.Name]
+        end
         local control = {}
 
         local app = Main.AppTemplate:Clone()
@@ -1466,7 +1490,11 @@ Main = (function()
             if type(iconIndex) == "number" then
                 data.IconMap:Display(app.Main.Icon, iconIndex)
             elseif type(iconIndex) == "string" then
-                data.IconMap:DisplayByKey(app.Main.Icon, iconIndex)
+                if iconIndex:match("^rbxassetid://") or iconIndex:match("^rbxasset://") or iconIndex:match("^http") then
+                    app.Main.Icon.Image = iconIndex
+                else
+                    data.IconMap:DisplayByKey(app.Main.Icon, iconIndex)
+                end
             end
         elseif type(iconIndex) == "string" then
             app.Main.Icon.Image = iconIndex
