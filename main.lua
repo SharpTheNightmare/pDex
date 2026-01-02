@@ -39,14 +39,12 @@ local isFsSupported = readfile and writefile and isfile and isfolder and listfil
 
 -- Main vars
 local Main, Explorer, Properties, ScriptViewer, Console, SaveInstance, ModelViewer --[[, SecretServicePanel]] ,
-    DefaultSettings, Notebook, Serializer, Lib
+    DefaultSettings, Notebook, Serializer, Lib, Theme
 local ggv = getgenv or nil
 local API, RMD
 
 -- Default Settings
 DefaultSettings = (function()
-    local ThemeModule = EmbeddedModules and EmbeddedModules["Theme"] and EmbeddedModules["Theme"]()
-    local Theme = ThemeModule and ThemeModule.Main and ThemeModule.Main()
 
     return {
         Explorer = {
